@@ -1,4 +1,6 @@
+import 'package:chat_app_lee/src/services/auth_service.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -21,17 +23,23 @@ class _UsuariosPageState extends State<UsuariosPage> {
   ];
   @override
   Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context);
+    final usuario = authService.usuario;
     return Scaffold(
         appBar: AppBar(
-          title: const Text(
-            'Mi nombre',
-            style: TextStyle(color: Colors.black54),
+          title: Text(
+            usuario?.nombre ?? 'Sin Nombre',
+            style: const TextStyle(color: Colors.black54),
           ),
           centerTitle: true,
           elevation: 2,
           backgroundColor: Colors.white,
           leading: IconButton(
-              onPressed: () {},
+              onPressed: () {
+                //TODO: desconectar del socket io
+                Navigator.pushReplacementNamed(context, 'login');
+                AuthService.deleteToken();
+              },
               icon: const Icon(
                 Icons.exit_to_app,
                 color: Colors.black,

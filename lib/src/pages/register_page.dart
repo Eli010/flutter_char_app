@@ -1,5 +1,10 @@
+// ignore_for_file: avoid_print
+
+import 'package:chat_app_lee/src/helpers/mostrar_alerta.dart';
+import 'package:chat_app_lee/src/services/auth_service.dart';
 import 'package:chat_app_lee/src/widgets/custom_input.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../widgets/boton_personalizado.dart';
 import '../widgets/labels.dart';
@@ -57,6 +62,7 @@ class __FormState extends State<_Form> {
   final nombreCtrl = TextEditingController();
   @override
   Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context);
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 40),
       child: Column(
@@ -79,7 +85,24 @@ class __FormState extends State<_Form> {
               textEditingController: nombreCtrl),
           BotonPersonalizado(
             text: 'Registrar',
-            onPressed: () {},
+            onPressed: authService.autenticando
+                ? () => {}
+                : () async {
+                    print(emailCtrl.text);
+                    print(passCtrl.text);
+                    print(nombreCtrl.text);
+                    FocusScope.of(context).unfocus();
+                    final registerOk = await authService.register(
+                        nombreCtrl.text.trim(),
+                        emailCtrl.text.trim(),
+                        passCtrl.text.trim());
+                    if (registerOk == true) {
+                      Navigator.pushReplacementNamed(context, 'usuarios');
+                    } else {
+                      mostrarAlerta(context, 'Registro Incorrecto',
+                          'Todos los campos son obligatorios');
+                    }
+                  },
           ),
         ],
       ),
