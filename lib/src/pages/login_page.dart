@@ -1,10 +1,11 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 // ignore_for_file: avoid_print
 
 import 'package:chat_app_lee/src/helpers/mostrar_alerta.dart';
 import 'package:chat_app_lee/src/services/auth_service.dart';
+import 'package:chat_app_lee/src/services/socket_service.dart';
 import 'package:chat_app_lee/src/widgets/custom_input.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import '../widgets/boton_personalizado.dart';
 import '../widgets/labels.dart';
@@ -63,6 +64,7 @@ class __FormState extends State<_Form> {
   Widget build(BuildContext context) {
     //aqui todos trabajos con nuestro provider
     final authService = Provider.of<AuthService>(context);
+    final socketService = Provider.of<SocketService>(context);
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 40),
       child: Column(
@@ -90,7 +92,7 @@ class __FormState extends State<_Form> {
                     final loginOk = await authService.login(
                         emailCtrl.text.trim(), passCtrl.text.trim());
                     if (loginOk) {
-                      //TODO: conectar a nuestro socket server
+                      socketService.connect();
                       Navigator.pushReplacementNamed(context, 'usuarios');
                     } else {
                       mostrarAlerta(context, 'Login Incorrecto',

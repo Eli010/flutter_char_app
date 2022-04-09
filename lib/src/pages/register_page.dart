@@ -2,6 +2,7 @@
 
 import 'package:chat_app_lee/src/helpers/mostrar_alerta.dart';
 import 'package:chat_app_lee/src/services/auth_service.dart';
+import 'package:chat_app_lee/src/services/socket_service.dart';
 import 'package:chat_app_lee/src/widgets/custom_input.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -62,6 +63,7 @@ class __FormState extends State<_Form> {
   final nombreCtrl = TextEditingController();
   @override
   Widget build(BuildContext context) {
+    final socketService = Provider.of<SocketService>(context);
     final authService = Provider.of<AuthService>(context);
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 40),
@@ -88,15 +90,13 @@ class __FormState extends State<_Form> {
             onPressed: authService.autenticando
                 ? () => {}
                 : () async {
-                    print(emailCtrl.text);
-                    print(passCtrl.text);
-                    print(nombreCtrl.text);
                     FocusScope.of(context).unfocus();
                     final registerOk = await authService.register(
                         nombreCtrl.text.trim(),
                         emailCtrl.text.trim(),
                         passCtrl.text.trim());
                     if (registerOk == true) {
+                      socketService.connect();
                       Navigator.pushReplacementNamed(context, 'usuarios');
                     } else {
                       mostrarAlerta(context, 'Registro Incorrecto',
